@@ -1,0 +1,44 @@
+.. Agoraplex Predicates documentation master file, created by
+   sphinx-quickstart2 on Fri Jan 11 20:37:25 2013.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+====================================
+ The `Agoraplex` Predicates Library
+====================================
+
+.. include:: narr/blurb.rst
+
+
+Motivation and applications
+---------------------------
+
+**TODO:** something goes here.
+
+
+.. _html_api_documentation:
+
+API Documentation
+=================
+
+Documentation for every :doc:`predicates <api/predicates>` API.
+
+.. toctree::
+   :maxdepth: 2
+
+   api/predicates
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+.. add glossary in a hidden toc to avoid warnings (borrowed from
+   Pyramid docs)
+
+.. toctree::
+   :hidden:
+
+   narr/blurb
