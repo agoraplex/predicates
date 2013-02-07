@@ -1,10 +1,11 @@
 The :mod:`predicates` module provides a variety of `predicates`,
 `predicate factories`, and `predicate partials`.
 
-    A predicate is a function that returns the truth value of some
-    condition
+    "A predicate is a function that returns the truth value of some
+    condition."
 
-    -- Andrew M. Kuchling, `Python Functional Programming HOWTO`_
+    -- Andrew M. Kuchling,
+       `Python Functional Programming HOWTO`_
 
 .. _Python Functional Programming HOWTO: http://docs.python.org/2/howto/functional.html#built-in-functions
 
