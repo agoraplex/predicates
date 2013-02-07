@@ -9,6 +9,9 @@
 
 .. include:: narr/blurb.rst
 
+The `Agoraplex` Predicates Library is licensed under the BSD
+"3-clause" license. See :doc:`LICENSE` for details.
+
 
 Motivation and applications
 ---------------------------
@@ -42,3 +45,4 @@ Indices and tables
    :hidden:
 
    narr/blurb
+   LICENSE
