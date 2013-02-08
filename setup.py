@@ -17,4 +17,10 @@ setup(
     long_description=open('README.rst').read(),
     install_requires=[],
     tests_require=['nose>=1.2.1'],
+    extras_require={
+        'docs': [
+            'sphinx>=1.1',
+            'agoraplex.themes.sphinx',
+            ],
+        },
 )
