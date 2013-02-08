@@ -1,14 +1,13 @@
-from distribute_setup import use_setuptools
-use_setuptools()
-
 from setuptools import setup
 
 requirements = {
-    'install': [],
+    'install': [
+        'distribute',
+        ],
     'extras': {
         'docs': [
             'sphinx>=1.1',
-            'agoraplex.themes.sphinx',
+            'agoraplex.themes.sphinx>=0.1.2',
             ],
         'tests': [
             'nose>=1.2.1',
