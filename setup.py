@@ -20,7 +20,7 @@ requirements = {
 
 setup(
     name='predicates',
-    version='0.0.0',
+    version='0.0.1',
     author='Tripp Lilley',
     author_email='tripplilley@gmail.com',
     packages=['predicates'],
