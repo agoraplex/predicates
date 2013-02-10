@@ -1,3 +1,8 @@
+VERSION = (0, 0, 2)
+
+__version__ = ".".join(str(v) for v in VERSION)
+__version_full__ = __version__
+
 from operator import (
     # comparisons
     lt, le, eq, ne, ge, gt,

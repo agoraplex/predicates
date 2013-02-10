@@ -1,5 +1,7 @@
 from setuptools import setup
 
+from predicates import __version__
+
 requirements = {
     'install': [
         'distribute',
@@ -29,7 +31,7 @@ with open("requirements.rtfd.txt", "w") as rtfd:
 
 setup(
     name='predicates',
-    version='0.0.1',
+    version=__version__,
     author='Tripp Lilley',
     author_email='tripplilley@gmail.com',
     packages=['predicates'],
