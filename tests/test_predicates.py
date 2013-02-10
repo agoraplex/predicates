@@ -1,5 +1,9 @@
 from nose.tools import raises
 
+from predicates import *
+
+# ``import *`` doesn't import the underscore-prefixed names (will it
+# fix things to put them into `__all__`?)
 from predicates import (
     _apply,
 
@@ -21,20 +25,6 @@ from predicates import (
 
     _isa,
     _is,
-
-    isatom,
-    isiterable,
-    isnsiterable,
-    isstring,
-    isfalse,
-    isnone,
-    istrue,
-
-    truth,
-    not_,
-    isempty,
-
-    isint,
     )
 
 class TestSimplePredicates (object):
