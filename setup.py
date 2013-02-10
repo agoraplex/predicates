@@ -18,6 +18,15 @@ requirements = {
         },
     }
 
+
+# write requirements for Travis and ReadTheDocs to use...
+with open("requirements.travis.txt", "w") as travis:
+    travis.write('\n'.join(requirements['extras']['tests']) + '\n')
+
+with open("requirements.rtfd.txt", "w") as rtfd:
+    rtfd.write('\n'.join(requirements['extras']['docs']) + '\n')
+
+
 setup(
     name='predicates',
     version='0.0.1',

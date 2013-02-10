@@ -3,6 +3,7 @@
 *.tar.gz
 *.tar.bz2
 .coverage
+requirements.*.txt
 build/
 dist/
 venv/
