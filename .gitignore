@@ -4,6 +4,8 @@
 *.tar.bz2
 .coverage
 build/
+cover/
 dist/
+htmlcov/
 venv/
 !.gitignore
