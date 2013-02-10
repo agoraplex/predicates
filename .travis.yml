@@ -9,3 +9,8 @@ install:
 
 script:
   - nosetests
+
+after_script:
+  - git clone https://github.com/coagulant/coveralls-python.git coveralls
+  - cd coveralls ; python setup.py develop ; cd ..
+  - coveralls/bin/coveralls --verbose
