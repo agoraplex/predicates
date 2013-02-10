@@ -3,7 +3,6 @@
 *.tar.gz
 *.tar.bz2
 .coverage
-requirements.travis.txt
 build/
 dist/
 venv/
