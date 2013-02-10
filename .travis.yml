@@ -4,4 +4,5 @@ python:
 install:
   - "pip install . --use-mirrors"
   - "pip install -r requirements.travis.txt --use-mirrors"
-script: nosetests --with-coverage --cover-branches --cover-package predicates
+script:
+  - nosetests
