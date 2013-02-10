@@ -2,6 +2,9 @@
  predicates
 ============
 
+.. image:: https://travis-ci.org/agoraplex/predicates.png?branch=master
+   :target: https://travis-ci.org/agoraplex/predicates
+
 A collection of predicate factories, functions, and partials, for
 functional programming.
 
