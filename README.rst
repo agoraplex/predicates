@@ -5,6 +5,9 @@
 .. image:: https://travis-ci.org/agoraplex/predicates.png?branch=master
    :target: https://travis-ci.org/agoraplex/predicates
 
+.. image:: https://coveralls.io/repos/agoraplex/predicates/badge.png?branch=master
+   :target: https://coveralls.io/r/agoraplex/predicates
+
 A collection of predicate factories, functions, and partials, for
 functional programming.
 
