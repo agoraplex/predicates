@@ -60,8 +60,12 @@ def test_import ():
     import predicates
     import os.path
 
-    assert os.path.relpath(predicates.__file__, __file__
-                           ).startswith("../../predicates/")
+    predicates_file = predicates.__file__
+    test_file = __file__
+    path_from_predicates_to_test = os.path.relpath(
+        predicates_file, test_file)
+
+    assert path_from_predicates_to_test.startswith("../../predicates/")
 
 class TestTypePredicates (object):
     def test_isa (self):
