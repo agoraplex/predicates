@@ -490,6 +490,32 @@ def isempty (val):
     """
     return issized(val) and len(val) == 0
 
+def _contains (*contents):
+    """
+    Returns a `callable` which returns `True` if *each* member of
+    ``contents`` is a member of its ``container`` argument.
+
+    The signature of the returned callable is:
+
+    .. function:: fn (container:Container) -> bool
+    """
+
+    # :func:`all` would return `True` with an empty `contents`
+    if len(contents) == 0:
+        return true_
+
+    # no reason to call :func:`all` if we're only testing one value
+    if len(contents) == 1:
+        el = contents[0]
+        def _contains (container):
+            return el in container
+        return _contains
+
+    # otherwise, we need to check each element.
+    def _contains (container):
+        return all(el in container for el in contents)
+    return _contains
+
 
 # Type predicates
 # ---------------

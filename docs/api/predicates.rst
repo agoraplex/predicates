@@ -241,6 +241,7 @@ without making demands on its type (iterability, etc.), beyond its
 implementing ``__len__``.
 
 .. autofunction:: isempty
+.. autofunction:: _contains
 
 
 Type predicates

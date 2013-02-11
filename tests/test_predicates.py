@@ -24,6 +24,8 @@ from predicates import (
     _nkw,
     _inkw,
 
+    _contains,
+
     _isa,
     _is,
     )
@@ -101,6 +103,27 @@ class TestValuePredicates (object):
         assert not isempty("bad robot!")
         assert not isempty(0)
         assert not isempty(set((1, 2, 3)))
+
+    def test_contains_none (self):
+        assert _contains()(())
+        assert _contains()('')
+        assert _contains()("bad robot!")
+
+    def test_contains_one (self):
+        assert _contains('')('')
+        assert _contains('')("bad robot!")
+        assert _contains(42)((4, 8, 15, 16, 23, 42))
+        assert _contains('bad')(("bad", "robot!"))
+        assert _contains('bad')("bad robot!")
+
+        assert not _contains(32)((4, 8, 15, 16, 23, 42))
+        assert not _contains('bad')(("bad robot!", ))
+
+    def test_contains_multiple (self):
+        assert _contains(23, 42)((4, 8, 15, 16, 23, 42))
+        assert _contains('bad', 'robo')("bad robot!")
+
+        assert not _contains('bad', 'robo')(('bad', 'robot!'))
 
 
 class TestIdentityPredicates (object):
