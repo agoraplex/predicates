@@ -139,7 +139,6 @@ which is equivalent to:
 .. autofunction:: _and
 .. autofunction:: _not
 .. autofunction:: _or
-.. autofunction:: _apply
 .. autofunction:: _zip
 
 
@@ -178,12 +177,15 @@ E.g.,
 .. autofunction:: _any
 .. autofunction:: _none
 
-.. function:: _args (...)
 
 `_args` is a special, extremely flexible, very overloaded `predicate
 factory` for applying predicates to a function's arguments. It is a
 singleton instance of :class:`ArgSlicer`, the documentation for which
-covers all of the :func:`_args` use-cases.
+covers all of the :func:`_args` use-cases. It is a `predicate
+application` because it selects a set of arguments to which to *apply*
+a set of predicates.
+
+.. function:: _args (...)
 
 .. autoclass:: ArgSlicer
 
@@ -253,6 +255,14 @@ They are `composable`, since they test only the features they
 need. E.g., ``_and(iscallable, isiterable)`` would be `True` for any
 class which implemented both ``__call__`` and ``__iter__``.
 
+Type predicate factory
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autofunction:: _isa
+
+Generated type predicates
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. autofunction:: isatom
 .. autofunction:: isiterable
 .. autofunction:: isnsiterable
@@ -295,20 +305,28 @@ Identity predicates
 These predicates test object identity (i.e., the :ref:`is <is>`
 operator).
 
+Identity predicate factory
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autofunction:: _is
+
+Generated identity predicates
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. autofunction:: isnone
 .. autofunction:: istrue
 .. autofunction:: isfalse
 
 
-Helper predicates
------------------
+Helpers
+-------
 
-These predicates are the foundations upon which several of the other
+These functions are the foundations upon which several of the
 predicates are built. They may be useful when writing new predicates
 that are more than composition and application of the existing
 predicates.
 
+.. autofunction:: _apply
+.. autofunction:: _return
 .. autofunction:: _nis
 .. autofunction:: _fnis
-.. autofunction:: _isa
-.. autofunction:: _is
