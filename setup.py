@@ -29,7 +29,7 @@ with open("requirements.rtfd.txt", "w") as rtfd:
 
 setup(
     name='predicates',
-    version='0.0.2',
+    version='0.0.3',
     author='Tripp Lilley',
     author_email='tripplilley@gmail.com',
     packages=['predicates'],
