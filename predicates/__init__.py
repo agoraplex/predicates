@@ -625,6 +625,34 @@ def _apply (func):
         return func(*args, **kwargs)
     return _apply
 
+__cache_return = {}
+def _return (val):
+    """
+    Always returns `val`.
+
+    WHY?!? Because, sometimes you need a `callable` that's just a
+    closure over ``return val``. E.g., in the 'no contents'
+    special-case in :func:`_contains`.
+
+    **NOTE:** This is one of the few memoized factories, because we
+    don't want a proliferation of `_return(True)` and `_return(False)`
+    helpers (of course, that's why we have :func:`_true` and
+    :func:`_false`, but no matter).
+    """
+    if ishashable(val):
+        if val not in __cache_return:
+            def _return (*args, **kwargs):
+                return val
+            __cache_return[val] = _return
+        return __cache_return[val]
+
+    def _return (*args, **kwargs):
+        return val
+    return _return
+
+_true = _return(True)
+_false = _return(False)
+
 def _nis (atleast=False, atmost=False, exactly=False):
     """
     Returns a `callable` which returns `True` if ``n`` is ``>=``

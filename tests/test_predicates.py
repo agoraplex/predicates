@@ -6,6 +6,7 @@ from predicates import *
 # fix things to put them into `__all__`?)
 from predicates import (
     _apply,
+    _return,
 
     _and,
     _or,
@@ -958,3 +959,41 @@ class TestKeywordArgPresencePredicates (object):
         assert not _inkw(exactly={'jack': 4})(jack=True, kate=True)
         assert not _inkw(exactly={'sawyer': 16, 'kate': 8})(jack=True, kate=True)
         assert not _inkw(exactly={'jack': 4, 'kate': 8})(jack=True, kate=True, sawyer=True)
+
+
+class TestReturnHelper (object):
+    def test_return (self):
+        assert _return(True)()
+        assert _return(True)() is True
+        assert _return("bad robot!")() == "bad robot!"
+
+        # list equality is okay
+        assert _return(list())() == list()
+
+        # object identity is okay
+        l = list()
+        assert _return(l)() is l
+
+        assert not _return(False)()
+        assert not _return(False)() == True
+
+    def test_return_called_with_args (self):
+        assert _return(True)(4, 8, 15, 16, 23, 42)
+        assert _return(True)(False) is True
+        assert _return("bad robot!")(list()) == "bad robot!"
+        assert _return(list())({}, jack=4, sawyer=8) == list()
+
+        assert not _return(False)(8, jack=4, kate=15)
+        assert not _return(False)(hurley=16) == True
+
+    def test_cache_return (self):
+        assert _return(True) is _return(True)
+        assert _return("bad robot!") is _return("bad robot!")
+
+        assert not _return(True) is _return(False)
+        assert not _return(lambda: True) is _return(lambda: True)
+
+        # lists aren't hashable
+        l = list()
+        assert not _return(l) is _return(l)
+        assert not _return(list()) is _return(list())
