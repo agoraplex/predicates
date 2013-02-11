@@ -27,25 +27,37 @@ from predicates import (
     _is,
     )
 
-class TestSimplePredicates (object):
-    def test_isatom (self):
-        assert isatom("bad robot!")
-        assert isatom(u"bad robot!")
-        assert isatom(1)
-        assert not isatom(())
-        assert not isatom((4, 8, 15, 16, 23, 42))
-        assert not isatom([4, 8, 15, 16, 23, 42])
+
+# test helpers
+def fail (*args, **kwargs):
+    raise Exception("should've short-circuited past this")
+
+def true (*args, **kwargs):
+    return True
+
+def false (*args, **kwargs):
+    return False
+
+def passfail (val):
+    """
+    raise if ``failure`` is ``'fail'``, otherwise return
+    ``val``.
+    """
+    if val == 'fail':
+        fail()
+    return val
+
+class Thing (object):
+    pass
+
 
 class TestTypePredicates (object):
     def test_isa (self):
-        class Foo (object):
-            pass
-
-        assert _isa(type)(Foo)
-        assert _isa(Foo)(Foo())
+        assert _isa(type)(Thing)
+        assert _isa(Thing)(Thing())
         assert _isa(''.__class__)("bad robot!")
-        assert _isa((type, object))(Foo)
-        assert _isa((type, object))(Foo())
+        assert _isa((type, object))(Thing)
+        assert _isa((type, object))(Thing())
         assert _isa((type, object))("bad robot!")
 
         assert not _isa(type)("bad robot!")
@@ -62,19 +74,25 @@ class TestTypePredicates (object):
         C.__name__ = ''
         assert _isa(C).__doc__ == "`True` if `obj` is an instance of <class 'test_predicates.'>"
 
+    def test_isatom (self):
+        assert isatom("bad robot!")
+        assert isatom(u"bad robot!")
+        assert isatom(1)
+        assert not isatom(())
+        assert not isatom((4, 8, 15, 16, 23, 42))
+        assert not isatom([4, 8, 15, 16, 23, 42])
+
     def test_isnsiterable (self):
         assert isnsiterable(())
         assert isnsiterable([])
         assert not isnsiterable("bad robot!")
         assert not isnsiterable(u"bad robot!")
 
+
 class TestIdentityPredicates (object):
     def test_is (self):
-        class Foo (object):
-            pass
-
         assert _is(None)(None)
-        assert _isa(Foo)(Foo())
+        assert _isa(Thing)(Thing())
         assert _isa(''.__class__)("bad robot!")
 
     def test_isa_docstring (self):
@@ -94,7 +112,8 @@ class TestIdentityPredicates (object):
         assert not isempty(0)
         assert not isempty(False)
 
-class TestCompositePredicates (object):
+
+class TestApplyHelper (object):
     def test_apply (self):
         # args
         assert _apply(isint)([42,])
@@ -140,6 +159,8 @@ class TestCompositePredicates (object):
     def test_apply_unexpected_kwargs (self):
         _apply(isstring)(["bad robot!"], {'jack': 4, 'kate': 15})
 
+
+class TestCompositePredicates (object):
     def test_not (self):
         # no predicates
         assert _not()(True)
@@ -219,6 +240,18 @@ class TestCompositePredicates (object):
         assert not _zip(isstring, isempty)("bad robot!", (4, 8), (),
                                            kate=15, hurley=16)
 
+    def test_composition (self):
+        assert not _and(_not(isstring), _or(isempty, isatom))('')
+        assert _and(_not(isstring), _or(isempty, isatom))(())
+        assert _and(_not(isstring), _or(isempty, isatom))(42)
+
+    def test_short_circuit (self):
+        assert _any(passfail)(True, 'fail')
+        assert not _all(passfail)(False, 'fail')
+        assert not _none(passfail)(True, 'fail')
+
+
+class TestApplicationPredicates (object):
     def test_all (self):
         # no args
         assert _all(istrue)()
@@ -267,147 +300,16 @@ class TestCompositePredicates (object):
         assert not _none(isstring)((), "bad robot!")
 
     def test_composition (self):
-        assert not _and(_not(isstring), _or(isempty, isatom))('')
-        assert _and(_not(isstring), _or(isempty, isatom))(())
-        assert _and(_not(isstring), _or(isempty, isatom))(42)
-
         assert _all(_or(isempty, isatom))('', (), 42)
         assert not _all(_or(isempty, isatom))('', (), (42,))
 
     def test_short_circuit (self):
-        def fail (*args, **kwargs):
-            raise Exception("should've short-circuited past this")
-
-        def true (*args, **kwargs):
-            return True
-
-        def false (*args, **kwargs):
-            return False
-
-        def passfail (val):
-            """
-            raise if ``failure`` is ``'fail'``, otherwise return
-            ``val``.
-            """
-            if val == 'fail':
-                fail()
-            return val
-
         assert not _and(false, fail)()
         assert _or(true, fail)()
         assert not _not(true, fail)()
 
-        assert _any(passfail)(True, 'fail')
-        assert not _all(passfail)(False, 'fail')
-        assert not _none(passfail)(True, 'fail')
 
-
-class TestArgPredicates (object):
-    @raises(ValueError)
-    def test_args_call_none (self):
-        _args()()
-
-    def test_args_call_pos (self):
-        assert _args(isstring)()
-        assert _args(isstring)('dharma')
-        assert _args(isstring)('dharma', 'miles')
-
-        assert not _args(isstring)(4, "bad robot!")
-
-        assert _and(_args(isstring),
-                    _args(_not(isempty)))('jack', 'sawyer')
-        assert not _and(_args(isstring),
-                        _args(_not(isempty)))('jack', 'sawyer', '')
-
-    def test_args_call_kw (self):
-        assert _args(ricardo=isstring)(ricardo='#2')
-        assert _args(ricardo=isstring)(ricardo='#2', hurley=16)
-        assert _args(ricardo=isstring, hurley=isint)(ricardo='#2', hurley=16)
-
-        assert _args(ricardo=isstring)(4, 8, ricardo='#2')
-        assert _args(ricardo=isstring)(4, 8, ricardo='#2', hurley=16)
-        assert _args(ricardo=isstring, hurley=isint)(4, 8, ricardo='#2', hurley=16)
-
-        assert not _args(ricardo=isstring)()
-        assert not _args(ricardo=isstring)(ricardo=2)
-        assert not _args(ricardo=isstring)(ricardo=2, hurley=16)
-        assert not _args(ricardo=isstring, hurley=isint)(ricardo=2, hurley=16)
-
-        assert not _args(ricardo=isstring)(4, 8, ricardo=2)
-        assert not _args(ricardo=isstring)(4, 8, ricardo=2, hurley=16)
-        assert not _args(ricardo=isstring, hurley=isint)(4, 8, ricardo=2, hurley=16)
-
-    def test_args_call_pos_and_kw (self):
-        assert _args(isint, ricardo=isstring)(ricardo='#2')
-        assert _args(isint, ricardo=isstring)(4, 8, ricardo='#2', hurley=16)
-        assert _args(isint, ricardo=isstring, hurley=isint)(4, 8, ricardo='#2', hurley=16)
-
-        assert not _args(isint, ricardo=isstring)()
-        assert not _args(isint, ricardo=isstring)(ricardo=2)
-        assert not _args(isint, ricardo=isstring)(4, 8, ricardo=2, hurley=16)
-        assert not _args(isint, ricardo=isstring)(4, 8, 'kate', ricardo='#2', hurley=16)
-        assert not _args(isint, ricardo=isstring, hurley=isint)(4, 8, ricardo=2, hurley=16)
-
-    def test_args_mix_call_idx (self):
-        assert _args[0](isstring, ricardo=isstring)("bad robot!", 4, 8, ricardo='#2')
-        assert _args[-1](isint, ricardo=isstring)(4, (), 8, ricardo='#2')
-        assert _and(_args[0](isstring),
-                    _args[1](isnone))("bad robot!", None)
-
-        assert not _args[0](isint, ricardo=isstring)("bad robot!", ricardo='#2')
-        assert not _args[0](isint, ricardo=isstring)(4, "bad robot!", ricardo=2)
-
-    def test_args_idx (self):
-        assert _args[0](isstring)("bad robot!", 4, 8)
-        assert _args[-1](isint)(4, (), 8)
-        assert _and(_args[0](isstring),
-                    _args[1](isnone))("bad robot!", None)
-
-        assert not _args[0](isstring)(4, "bad robot!")
-
-    def test_args_idx_slice (self):
-        assert _args[:](isstring)()
-        assert _args[:](isstring)('dharma')
-        assert _args[:](isstring)('dharma', 'miles')
-        assert _args[:2](isstring)('dharma', 'miles')
-        assert _args[0:1](isstring)("bad robot!", 4, 8)
-        assert _args[2:4](isstring)(4, 8, 'linus', 'juliet')
-        assert _args[2:](isstring)(4, 8, 'linus', 'juliet')
-        assert _args[1::2](isstring)(4, 'linus', 8, 'juliet', 15, 'hurley', 16)
-        assert _args[1:2](isiterable)(4, (), 8)
-        assert _args[:-1](isint)(4, 8, ())
-        assert _args[-3:-1](isint)(4, 8, ())
-
-        assert not _args[0:1](isstring)(4, "bad robot!")
-        assert not _args[:](isstring)('dharma', 4, 8, 15, 16, 23, 42)
-
-        assert _and(_args[0:1](isstring),
-                    _args[1:2](isnone))("bad robot!", None)
-
-    # ___TODO:___ string keys for `_args[...]`
-    def test_args_string (self):
-        pass
-
-    def test_args_string_slice (self):
-        pass
-
-    # ___TODO:___ multi-dimensional slices for `_args[...]`
-    def test_args_multi_idx (self):
-        pass
-
-    def test_args_multi_idx_slice (self):
-        pass
-
-    def test_args_multi_string (self):
-        pass
-
-    def test_args_multi_string_slice (self):
-        pass
-
-    def test_args_multi_mixed (self):
-        pass
-
-
+class TestNumericRangePredicates (object):
     @raises(ValueError)
     def test_nis_bad_spec (self):
         _nis(atleast=1, exactly=2)
@@ -502,6 +404,8 @@ class TestArgPredicates (object):
         assert not _fnis(lambda: 2, exactly=1)()
         assert not _fnis(lambda: 1, exactly=2)()
 
+
+class TestArgCountPredicates (object):
     @raises(ValueError)
     def test_nargs_bad_spec (self):
         _nargs(atleast=1, exactly=2)
@@ -611,6 +515,114 @@ class TestArgPredicates (object):
         assert not _nargs(exactly=1)(4, sawyer=8)
         assert not _nargs(exactly=3)(4, sawyer=8)
 
+
+class TestArgContentPredicates (object):
+    @raises(ValueError)
+    def test_args_call_none (self):
+        _args()()
+
+    def test_args_call_pos (self):
+        assert _args(isstring)()
+        assert _args(isstring)('dharma')
+        assert _args(isstring)('dharma', 'miles')
+
+        assert not _args(isstring)(4, "bad robot!")
+
+        assert _and(_args(isstring),
+                    _args(_not(isempty)))('jack', 'sawyer')
+        assert not _and(_args(isstring),
+                        _args(_not(isempty)))('jack', 'sawyer', '')
+
+    def test_args_call_kw (self):
+        assert _args(ricardo=isstring)(ricardo='#2')
+        assert _args(ricardo=isstring)(ricardo='#2', hurley=16)
+        assert _args(ricardo=isstring, hurley=isint)(ricardo='#2', hurley=16)
+
+        assert _args(ricardo=isstring)(4, 8, ricardo='#2')
+        assert _args(ricardo=isstring)(4, 8, ricardo='#2', hurley=16)
+        assert _args(ricardo=isstring, hurley=isint)(4, 8, ricardo='#2', hurley=16)
+
+        assert not _args(ricardo=isstring)()
+        assert not _args(ricardo=isstring)(ricardo=2)
+        assert not _args(ricardo=isstring)(ricardo=2, hurley=16)
+        assert not _args(ricardo=isstring, hurley=isint)(ricardo=2, hurley=16)
+
+        assert not _args(ricardo=isstring)(4, 8, ricardo=2)
+        assert not _args(ricardo=isstring)(4, 8, ricardo=2, hurley=16)
+        assert not _args(ricardo=isstring, hurley=isint)(4, 8, ricardo=2, hurley=16)
+
+    def test_args_call_pos_and_kw (self):
+        assert _args(isint, ricardo=isstring)(ricardo='#2')
+        assert _args(isint, ricardo=isstring)(4, 8, ricardo='#2', hurley=16)
+        assert _args(isint, ricardo=isstring, hurley=isint)(4, 8, ricardo='#2', hurley=16)
+
+        assert not _args(isint, ricardo=isstring)()
+        assert not _args(isint, ricardo=isstring)(ricardo=2)
+        assert not _args(isint, ricardo=isstring)(4, 8, ricardo=2, hurley=16)
+        assert not _args(isint, ricardo=isstring)(4, 8, 'kate', ricardo='#2', hurley=16)
+        assert not _args(isint, ricardo=isstring, hurley=isint)(4, 8, ricardo=2, hurley=16)
+
+    def test_args_mix_call_idx (self):
+        assert _args[0](isstring, ricardo=isstring)("bad robot!", 4, 8, ricardo='#2')
+        assert _args[-1](isint, ricardo=isstring)(4, (), 8, ricardo='#2')
+        assert _and(_args[0](isstring),
+                    _args[1](isnone))("bad robot!", None)
+
+        assert not _args[0](isint, ricardo=isstring)("bad robot!", ricardo='#2')
+        assert not _args[0](isint, ricardo=isstring)(4, "bad robot!", ricardo=2)
+
+    def test_args_idx (self):
+        assert _args[0](isstring)("bad robot!", 4, 8)
+        assert _args[-1](isint)(4, (), 8)
+        assert _and(_args[0](isstring),
+                    _args[1](isnone))("bad robot!", None)
+
+        assert not _args[0](isstring)(4, "bad robot!")
+
+    def test_args_idx_slice (self):
+        assert _args[:](isstring)()
+        assert _args[:](isstring)('dharma')
+        assert _args[:](isstring)('dharma', 'miles')
+        assert _args[:2](isstring)('dharma', 'miles')
+        assert _args[0:1](isstring)("bad robot!", 4, 8)
+        assert _args[2:4](isstring)(4, 8, 'linus', 'juliet')
+        assert _args[2:](isstring)(4, 8, 'linus', 'juliet')
+        assert _args[1::2](isstring)(4, 'linus', 8, 'juliet', 15, 'hurley', 16)
+        assert _args[1:2](isiterable)(4, (), 8)
+        assert _args[:-1](isint)(4, 8, ())
+        assert _args[-3:-1](isint)(4, 8, ())
+
+        assert not _args[0:1](isstring)(4, "bad robot!")
+        assert not _args[:](isstring)('dharma', 4, 8, 15, 16, 23, 42)
+
+        assert _and(_args[0:1](isstring),
+                    _args[1:2](isnone))("bad robot!", None)
+
+    # ___TODO:___ string keys for `_args[...]`
+    def todo_args_string (self):
+        pass
+
+    def todo_args_string_slice (self):
+        pass
+
+    # ___TODO:___ multi-dimensional slices for `_args[...]`
+    def todo_args_multi_idx (self):
+        pass
+
+    def todo_args_multi_idx_slice (self):
+        pass
+
+    def todo_args_multi_string (self):
+        pass
+
+    def todo_args_multi_string_slice (self):
+        pass
+
+    def todo_args_multi_mixed (self):
+        pass
+
+
+class TestPositionalArgCountPredicates (object):
     @raises(ValueError)
     def test_npos_bad_spec (self):
         _npos(atleast=1, exactly=2)
@@ -687,6 +699,8 @@ class TestArgPredicates (object):
         assert not _npos(exactly=1)(4, 8, hurley=15)
         assert not _npos(exactly=3)(4, sawyer=8)
 
+
+class TestKeywordArgCountPredicates (object):
     @raises(ValueError)
     def test_nkw_bad_spec (self):
         _nkw(atleast=1, exactly=2)
@@ -851,6 +865,8 @@ class TestArgPredicates (object):
         assert not _nkw(exactly=1)(4, sawyer=8, hurley=15)
         assert not _nkw(exactly=3)(4, sawyer=8)
 
+
+class TestKeywordArgPresencePredicates (object):
     @raises(ValueError)
     def test_inkw_bad_spec_atleast_exactly (self):
         _inkw(atleast={}, exactly={})
