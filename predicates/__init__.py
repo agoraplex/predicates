@@ -28,34 +28,9 @@ from collections import (
     Sized,
     )
 
-def _apply (func):
-    """
-    Returns a `callable` which expands its `args` and `kwargs` into
-    the `*args` and `**kwargs` of `func`. It's equivalent to
-    ``partial(apply, func)``, except that :func:`apply` is
-    deprecated.
 
-    The signature of the returned callable is:
-
-    .. function:: fn(args=(), kwargs={}) -> object
-
-    Its principal use is to make predicates which operate on all of
-    their arguments (i.e., `*args`) operate on *any* iterable. E.g.,
-    ``_apply(_all(isstring))(['jack', 'kate'])`` is equivalent to
-    ``_all(isstring)('jack', 'hurley')``.
-
-    This is especially useful when testing the *contents* of arguments
-    passed to a :func:`_zip` callable. E.g.,
-
-    .. code-block:: python
-
-       >>> int_and_strings = _zip(isint, _apply(_all(isstring)))
-       >>> int_and_strings(42, ['jack', 'kate', 'sawyer'])
-       True
-    """
-    def _apply (args=(), kwargs={}):
-        return func(*args, **kwargs)
-    return _apply
+# Predicate composition
+# ---------------------
 
 def _and (*predicates):
     """
@@ -109,6 +84,10 @@ def _zip (*predicates):
                    in zip(predicates, args))
     return _zip
 
+
+# Predicate application
+# ---------------------
+
 def _all (predicate):
     """
     Returns a `callable` which returns `True` if ``predicate`` returns
@@ -135,6 +114,10 @@ def _none (predicate):
     def _none (*args, **kwargs):
         return all(not predicate(arg) for arg in args)
     return _none
+
+
+# Argument predicates
+# -------------------
 
 class ArgSlicer (object):
     """
@@ -399,61 +382,7 @@ class ArgSlicer (object):
                             in kw_predicates.items()))
             return _args
         return _args_factory
-
 _args = ArgSlicer()
-
-def _nis (atleast=False, atmost=False, exactly=False):
-    """
-    Returns a `callable` which returns `True` if ``n`` is ``>=``
-    `atleast`, ``<=`` `atmost`, or ``==`` `exactly`. See
-    :func:`_nargs`, :func:`_nkw`, etc., for example use.
-
-    The signature of the returned `callable` is:
-
-    .. function:: fn (n:number) -> bool
-
-    `atleast` and `atmost` may be combined, but `exactly` must stand
-    alone.
-    """
-    if (atleast < 0) or (atmost < 0) or (exactly < 0):
-        raise ValueError("arg limits cannot be negative")
-
-    if not exactly is False:
-        if not ((atleast is False) and (atmost is False)):
-            raise ValueError(
-                "cannot mix 'exactly' and 'atleast' or 'atmost'")
-        def _nis_exactly (n):
-            return n == exactly
-        return _nis_exactly
-
-    if atleast is False and atmost is False:
-        raise ValueError(
-            "must specify 'exactly' or one or both of 'atleast' and 'atmost'")
-
-    if atleast is False:
-        atleast = 0
-
-    if atmost is False:
-        atmost = float('inf')
-
-    def _nis_between (n):
-        return (atleast <= n <= atmost)
-    return _nis_between
-
-def _fnis (func, atleast=False, atmost=False, exactly=False):
-    """
-    Returns a `callable` which returns `True` if the result of
-    ``func(*args, **kwargs)`` is ``>=`` `atleast` ``<=`` `atmost`, or
-    ``==`` `exactly`. See :func:`_nargs`, :func:`_nkw`, etc., for
-    example use.
-
-    `atleast` and `atmost` may be combined, but `exactly` must stand
-    alone.
-    """
-    __nis = _nis(atleast, atmost, exactly)
-    def _fnis (*args, **kwargs):
-        return __nis(func(*args, **kwargs))
-    return _fnis
 
 def _nargs (atleast=False, atmost=False, exactly=False):
     """
@@ -546,13 +475,9 @@ def _inkw (atleast=False, atmost=False, exactly=False):
         return atleast <= keys <= atmost
     return _inkw
 
-def isatom (val):
-    """
-    `True` if ``val`` looks 'atomic' (i.e., is a string, or any
-    non-iterable). This is a naive test: any non-string iterable
-    yields :data:`False`.
-    """
-    return not isnsiterable(val)
+
+# Value predicates
+# ----------------
 
 def isempty (val):
     """
@@ -564,6 +489,10 @@ def isempty (val):
     'standard' truth testing.
     """
     return issized(val) and len(val) == 0
+
+
+# Type predicates
+# ---------------
 
 def _isa (classinfo, docstring=None):
     """
@@ -615,7 +544,6 @@ def _is (it, docstring=None):
 
 doctmpl = "`True` if `obj` %s."
 
-# `instance` predicates
 iscallable  = _isa(Callable,        doctmpl % 'is `callable`')
 iscontainer = _isa(Container,       doctmpl % 'is a `container`')
 ishashable  = _isa(Hashable,        doctmpl % 'is `hashable`')
@@ -648,7 +576,104 @@ def isnsiterable (obj):
     """`True` if `obj` a non-string `iterable`"""
     return isiterable(obj) and not isstring(obj)
 
-# `identity` predicates
+def isatom (val):
+    """
+    `True` if ``val`` looks 'atomic' (i.e., is a string, or any
+    non-iterable). This is a naive test: any non-string iterable
+    yields :data:`False`.
+    """
+    return not isnsiterable(val)
+
+
+# Identity predicates
+# -------------------
+
 isnone      = _is(None,             doctmpl % '*is* :data:`None`')
 istrue      = _is(True,             doctmpl % '*is* :data:`True`')
 isfalse     = _is(False,            doctmpl % '*is* :data:`False`')
+
+
+# Helpers
+# -------
+
+def _apply (func):
+    """
+    Returns a `callable` which expands its `args` and `kwargs` into
+    the `*args` and `**kwargs` of `func`. It's equivalent to
+    ``partial(apply, func)``, except that :func:`apply` is
+    deprecated.
+
+    The signature of the returned callable is:
+
+    .. function:: fn(args=(), kwargs={}) -> object
+
+    Its principal use is to make predicates which operate on all of
+    their arguments (i.e., `*args`) operate on *any* iterable. E.g.,
+    ``_apply(_all(isstring))(['jack', 'kate'])`` is equivalent to
+    ``_all(isstring)('jack', 'hurley')``.
+
+    This is especially useful when testing the *contents* of arguments
+    passed to a :func:`_zip` callable. E.g.,
+
+    .. code-block:: python
+
+       >>> int_and_strings = _zip(isint, _apply(_all(isstring)))
+       >>> int_and_strings(42, ['jack', 'kate', 'sawyer'])
+       True
+    """
+    def _apply (args=(), kwargs={}):
+        return func(*args, **kwargs)
+    return _apply
+
+def _nis (atleast=False, atmost=False, exactly=False):
+    """
+    Returns a `callable` which returns `True` if ``n`` is ``>=``
+    `atleast`, ``<=`` `atmost`, or ``==`` `exactly`. See
+    :func:`_nargs`, :func:`_nkw`, etc., for example use.
+
+    The signature of the returned `callable` is:
+
+    .. function:: fn (n:number) -> bool
+
+    `atleast` and `atmost` may be combined, but `exactly` must stand
+    alone.
+    """
+    if (atleast < 0) or (atmost < 0) or (exactly < 0):
+        raise ValueError("arg limits cannot be negative")
+
+    if not exactly is False:
+        if not ((atleast is False) and (atmost is False)):
+            raise ValueError(
+                "cannot mix 'exactly' and 'atleast' or 'atmost'")
+        def _nis_exactly (n):
+            return n == exactly
+        return _nis_exactly
+
+    if atleast is False and atmost is False:
+        raise ValueError(
+            "must specify 'exactly' or one or both of 'atleast' and 'atmost'")
+
+    if atleast is False:
+        atleast = 0
+
+    if atmost is False:
+        atmost = float('inf')
+
+    def _nis_between (n):
+        return (atleast <= n <= atmost)
+    return _nis_between
+
+def _fnis (func, atleast=False, atmost=False, exactly=False):
+    """
+    Returns a `callable` which returns `True` if the result of
+    ``func(*args, **kwargs)`` is ``>=`` `atleast` ``<=`` `atmost`, or
+    ``==`` `exactly`. See :func:`_nargs`, :func:`_nkw`, etc., for
+    example use.
+
+    `atleast` and `atmost` may be combined, but `exactly` must stand
+    alone.
+    """
+    __nis = _nis(atleast, atmost, exactly)
+    def _fnis (*args, **kwargs):
+        return __nis(func(*args, **kwargs))
+    return _fnis

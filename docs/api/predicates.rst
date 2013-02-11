@@ -238,7 +238,6 @@ arguments. E.g., ``isempty(val)`` tests that ``val`` has zero length,
 without making demands on its type (iterability, etc.), beyond its
 implementing ``__len__``.
 
-.. autofunction:: isatom
 .. autofunction:: isempty
 
 
@@ -254,18 +253,22 @@ They are `composable`, since they test only the features they
 need. E.g., ``_and(iscallable, isiterable)`` would be `True` for any
 class which implemented both ``__call__`` and ``__iter__``.
 
+.. autofunction:: isatom
+.. autofunction:: isiterable
+.. autofunction:: isnsiterable
+
 .. autofunction:: iscallable
 .. autofunction:: iscontainer
 .. autofunction:: ishashable
-.. autofunction:: isiterable
-.. autofunction:: isnsiterable
 .. autofunction:: isiterator
+
 .. autofunction:: ismap
 .. autofunction:: ismmap
 .. autofunction:: ismapv
 .. autofunction:: isitemsv
 .. autofunction:: iskeysv
 .. autofunction:: isvalsv
+
 .. autofunction:: isseq
 .. autofunction:: ismseq
 .. autofunction:: isset
@@ -274,10 +277,13 @@ class which implemented both ``__call__`` and ``__iter__``.
 .. autofunction:: isslice
 .. autofunction:: islist
 .. autofunction:: istuple
+
 .. autofunction:: isstring
 .. autofunction:: isstr
 .. autofunction:: isunicode
+
 .. autofunction:: isbool
+
 .. autofunction:: isint
 .. autofunction:: islong
 .. autofunction:: isfloat
