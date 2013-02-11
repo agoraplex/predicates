@@ -12,10 +12,4 @@ install:
   - pip install -r requirements.travis.txt --use-mirrors
 
 script:
-  - coverage run --source=predicates setup.py nosetests
-
-after_script:
-  - git remote set-url origin https://github.com/agoraplex/predicates.git
-  - git clone https://github.com/coagulant/coveralls-python.git coveralls
-  - cd coveralls ; python setup.py develop ; cd ..
-  - coveralls/bin/coveralls --verbose
+  - nosetests
