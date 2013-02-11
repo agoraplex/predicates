@@ -636,8 +636,8 @@ def _return (val):
 
     **NOTE:** This is one of the few memoized factories, because we
     don't want a proliferation of `_return(True)` and `_return(False)`
-    helpers (of course, that's why we have :func:`_true` and
-    :func:`_false`, but no matter).
+    helpers (of course, that's why we have :func:`true_` and
+    :func:`false_`, but no matter).
     """
     if ishashable(val):
         if val not in __cache_return:
@@ -650,8 +650,8 @@ def _return (val):
         return val
     return _return
 
-_true = _return(True)
-_false = _return(False)
+true_ = _return(True)
+false_ = _return(False)
 
 def _nis (atleast=False, atmost=False, exactly=False):
     """
