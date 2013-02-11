@@ -1,4 +1,0 @@
-[run]
-branch=True
-source=predicates
-cover_pylib=False
