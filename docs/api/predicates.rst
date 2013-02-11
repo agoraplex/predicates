@@ -177,6 +177,7 @@ E.g.,
 .. autofunction:: _any
 .. autofunction:: _none
 
+.. function:: _args (...)
 
 `_args` is a special, extremely flexible, very overloaded `predicate
 factory` for applying predicates to a function's arguments. It is a
@@ -184,8 +185,6 @@ singleton instance of :class:`ArgSlicer`, the documentation for which
 covers all of the :func:`_args` use-cases. It is a `predicate
 application` because it selects a set of arguments to which to *apply*
 a set of predicates.
-
-.. function:: _args (...)
 
 .. autoclass:: ArgSlicer
 
