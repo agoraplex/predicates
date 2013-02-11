@@ -528,20 +528,6 @@ def _isa (classinfo, docstring=None):
 
     return _isa
 
-def _is (it, docstring=None):
-    """
-    A wrapper around :func:`~operator.is_` to set the docstring (which
-    :func:`~functools.partial` does not).
-    """
-    def _is (obj):
-        return obj is it
-
-    # Make the docstring reflect what the new method does
-    _is.__doc__ = (docstring or
-                   ("`True` if `obj` is %s" %
-                    getattr(it, '__name__', it)))
-    return _is
-
 doctmpl = "`True` if `obj` %s."
 
 iscallable  = _isa(Callable,        doctmpl % 'is `callable`')
@@ -587,6 +573,20 @@ def isatom (val):
 
 # Identity predicates
 # -------------------
+
+def _is (it, docstring=None):
+    """
+    A wrapper around :func:`~operator.is_` to set the docstring (which
+    :func:`~functools.partial` does not).
+    """
+    def _is (obj):
+        return obj is it
+
+    # Make the docstring reflect what the new method does
+    _is.__doc__ = (docstring or
+                   ("`True` if `obj` is %s" %
+                    getattr(it, '__name__', it)))
+    return _is
 
 isnone      = _is(None,             doctmpl % '*is* :data:`None`')
 istrue      = _is(True,             doctmpl % '*is* :data:`True`')
