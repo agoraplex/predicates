@@ -33,16 +33,16 @@ from collections import (
     Sized,
     )
 
-def _apply (predicate):
+def _apply (func):
     """
     Returns a `callable` which expands its `args` and `kwargs` into
-    the `*args` and `**kwargs` of `predicate`. It's equivalent to
-    ``partial(apply, predicate)``, except that :func:`apply` is
+    the `*args` and `**kwargs` of `func`. It's equivalent to
+    ``partial(apply, func)``, except that :func:`apply` is
     deprecated.
 
     The signature of the returned callable is:
 
-    .. function:: fn(args=(), kwargs={}) -> bool
+    .. function:: fn(args=(), kwargs={}) -> object
 
     Its principal use is to make predicates which operate on all of
     their arguments (i.e., `*args`) operate on *any* iterable. E.g.,
@@ -59,7 +59,7 @@ def _apply (predicate):
        True
     """
     def _apply (args=(), kwargs={}):
-        return predicate(*args, **kwargs)
+        return func(*args, **kwargs)
     return _apply
 
 def _and (*predicates):
