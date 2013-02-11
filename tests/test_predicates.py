@@ -89,6 +89,19 @@ class TestTypePredicates (object):
         assert not isnsiterable(u"bad robot!")
 
 
+class TestValuePredicates (object):
+    def test_isempty (self):
+        assert isempty("")
+        assert isempty(())
+        assert isempty([])
+        assert isempty({})
+        assert isempty(set())
+
+        assert not isempty("bad robot!")
+        assert not isempty(0)
+        assert not isempty(set((1, 2, 3)))
+
+
 class TestIdentityPredicates (object):
     def test_is (self):
         assert _is(None)(None)
