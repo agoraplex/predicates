@@ -54,6 +54,15 @@ class Thing (object):
     pass
 
 
+def test_import ():
+    # ensure that we're testing against the development version, which
+    # *should* be in a sibling directory
+    import predicates
+    import os.path
+
+    assert os.path.relpath(predicates.__file__, __file__
+                           ).startswith("../../predicates/")
+
 class TestTypePredicates (object):
     def test_isa (self):
         assert _isa(type)(Thing)
