@@ -9,7 +9,7 @@ branches:
 
 install:
   - pip install -e . --use-mirrors
-  - pip install -r requirements.travis.txt --use-mirrors
+  - pip install -r reqs/travis.txt --use-mirrors
 
 script:
   - nosetests

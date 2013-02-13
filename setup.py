@@ -19,10 +19,10 @@ requirements = {
     }
 
 # write requirements for Travis and ReadTheDocs to use...
-with open("requirements.travis.txt", "w") as travis:
+with open("reqs/travis.txt", "w") as travis:
     travis.write('\n'.join(requirements['extras']['tests']) + '\n')
 
-with open("requirements.rtfd.txt", "w") as rtfd:
+with open("reqs/rtfd.txt", "w") as rtfd:
     rtfd.write('\n'.join(requirements['extras']['docs']) + '\n')
 
 setup(
