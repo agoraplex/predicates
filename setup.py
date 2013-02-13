@@ -39,4 +39,12 @@ setup(
     install_requires=requirements.get('install', None),
     tests_require=requirements.get('extras', {}).get('tests', None),
     extras_require=requirements.get('extras', None),
+
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 2.7",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        ]
 )
