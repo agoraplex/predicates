@@ -33,6 +33,7 @@ Documentation for every :doc:`predicates <api/predicates>` API.
 
    api/predicates
 
+
 Indices and tables
 ==================
 
@@ -40,8 +41,8 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. add glossary in a hidden toc to avoid warnings (borrowed from
-   Pyramid docs)
+.. add misc docs to a hidden toc to avoid warnings (a trick borrowed
+   from Pyramid docs)
 
 .. toctree::
    :hidden:
