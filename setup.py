@@ -18,7 +18,6 @@ requirements = {
         },
     }
 
-
 # write requirements for Travis and ReadTheDocs to use...
 with open("requirements.travis.txt", "w") as travis:
     travis.write('\n'.join(requirements['extras']['tests']) + '\n')
