@@ -7,7 +7,7 @@ requirements = {
     'extras': {
         'docs': [
             'sphinx>=1.1',
-            'agoraplex.themes.sphinx>=0.1.2',
+            'agoraplex.themes.sphinx>=0.1.3',
             ],
         'tests': [
             'nose>=1.2.1',
