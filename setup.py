@@ -8,12 +8,14 @@ requirements = {
         'docs': [
             'sphinx>=1.1',
             'agoraplex.themes.sphinx>=0.1.3',
+            'pygments',
             ],
         'tests': [
             'nose>=1.2.1',
             'coverage>=3.6',
             'pinocchio>=0.3.1',
-            'xtraceback[syntax]>=0.3.3',
+            'xtraceback>=0.3.3',
+            'pygments',
             ],
         },
     }
