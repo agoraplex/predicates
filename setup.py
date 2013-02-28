@@ -13,7 +13,7 @@ requirements = {
             'nose>=1.2.1',
             'coverage>=3.6',
             'pinocchio>=0.3.1',
-            'xtraceback>=0.3.3',
+            'xtraceback[syntax]>=0.3.3',
             ],
         },
     }
