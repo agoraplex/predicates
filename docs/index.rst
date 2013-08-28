@@ -21,8 +21,6 @@ Motivation and applications
 **TODO:** something goes here.
 
 
-.. _html_api_documentation:
-
 API Documentation
 =================
 
