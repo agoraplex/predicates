@@ -585,7 +585,7 @@ islong      = _isa(long,            doctmpl % 'is a :func:`long`')
 isfloat     = _isa(float,           doctmpl % 'is a :func:`float`')
 
 def isnsiterable (obj):
-    """`True` if `obj` a non-string `iterable`"""
+    """`True` if `obj` is a non-string `iterable`"""
     return isiterable(obj) and not isstring(obj)
 
 def isatom (val):
